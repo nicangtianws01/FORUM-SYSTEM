@@ -1,0 +1,46 @@
+# 服务器配置
+server:
+  servlet:    context-path: /
+  tomcat:    max-threads: 1000
+
+spring:
+  profiles:
+    active:
+    - dev
+  # 整合druid数据源  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource    url: jdbc:mysql:///forum?serverTimezone=GMT&characterEncoding=UTF-8
+    username: root
+  # 配置springmvc
+  thymeleaf:
+    prefix: classpath:/templates/pages/
+    suffix: .html
+    mode: HTML # 用非严格的 HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+
+# 整合mybatis-plus
+mybatis-plus:
+  # mapper文件
+  mapper-locations:  - classpath:/mapper/forum/*.xml
+  # 配置驼峰命名机制
+  configuration:    map-underscore-to-camel-case: true
+  # 为实体类配置别名  type-aliases-package: com.ws.forum.pojo
+  
+---
+spring:
+  thymeleaf:    cache: false
+  profiles: dev
+  datasource:
+    password: root
+server:
+    port: 8080
+    
+---
+spring:
+  profiles: run
+  datasource:
+    password: 12315swdqq
+server:
+    port: 80
+  
