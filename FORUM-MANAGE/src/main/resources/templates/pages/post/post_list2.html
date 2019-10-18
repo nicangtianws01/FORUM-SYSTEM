@@ -1,0 +1,64 @@
+<header class="mdui-typo mdui-clearfix mdui-valign">
+	<div class="mdui-col-md-4"><h1>帖子列表</h1></div>
+	<div class="mdui-col-md-8">
+		<div class="mdui-btn-group mdui-float-right">
+			<button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme post-add">添加</button>
+			<button class="mdui-btn mdui-btn-raised mdui-ripple post-update">修改</button>
+			<button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent post-delete">删除</button>
+		</div>
+	</div>
+</header>
+<div class="mdui-table-fluid">
+  <table class="mdui-table mdui-table-selectable">
+    <thead>
+    <tr>
+      <th class="mdui-table-col-numeric">id</th>
+      <th class="mdui-table-col-numeric">标题</th>
+      <th class="mdui-table-col-numeric">内容</th>
+      <th class="mdui-table-col-numeric">封面</th>
+      <th class="mdui-table-col-numeric">类别</th>
+      <th class="mdui-table-col-numeric">发布者</th>
+      <th class="mdui-table-col-numeric">发布时间</th>
+      <th class="mdui-table-col-numeric">修改时间</th>
+    </tr>
+    </thead>
+    <tbody id="tbodyId">
+		<tr th:each="post:${postList}">
+			<td th:text="${post.id}">
+			<td th:text="${post.title}">
+			<td th:text="${post.content}">
+			<td th:text="${post.cover}">
+			<td th:text="${post.typeId}">
+			<td th:text="${post.userId}">
+			<td th:text="${#dates.format(post.createdTime,'yyyy-MM-dd')}">
+			<td th:text="${#dates.format(post.updatedTime,'yyyy-MM-dd')}">
+		</tr>
+    </tbody>
+  </table>
+</div>
+<div class="mdui-fab-wrapper" id="post-fab">
+  <button class="mdui-fab mdui-ripple mdui-color-pink-accent">
+    <i class="mdui-icon material-icons">add</i>
+    <i class="mdui-icon mdui-fab-opened material-icons">mode_edit</i>
+  </button>
+  <div class="mdui-fab-dial">
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink"><i class="mdui-icon material-icons">backup</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red"><i class="mdui-icon material-icons">bookmark</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange"><i class="mdui-icon material-icons">access_alarms</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue"><i class="mdui-icon material-icons">touch_app</i>
+    </button>
+  </div>
+</div>
+<div class="mdui-container" id="pageId">
+	
+</div>
+<script>
+	$(function(){
+		var postFab = new mdui.Fab("#post-fab")
+		var $$ = mdui.JQ
+		$$(".mdui-table").mutation()
+	})
+</script>

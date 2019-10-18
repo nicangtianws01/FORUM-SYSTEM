@@ -1,0 +1,232 @@
+<header class="mdui-typo mdui-clearfix mdui-valign">
+	<div class="mdui-col-sm-4"><h1>帖子列表</h1></div>
+	<div class="mdui-col-sm-8">
+		<div class="mdui-btn-group mdui-float-right">
+			<button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme btn-add">添加</button>
+			<button class="mdui-btn mdui-btn-raised mdui-ripple btn-update">修改</button>
+			<button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent btn-delete">删除</button>
+		</div>
+	</div>
+</header>
+<div class="mdui-table-fluid">
+  <table class="mdui-table">
+    <thead>
+    <tr>
+      <th class="mdui-table-col-numeric">
+      	<label class="mdui-checkbox" mdui-tooltip="{content:'点击全选'}">
+	        <input type="checkbox" id="checkAll"/>
+	        <i class="mdui-checkbox-icon"></i>
+      	</label>
+      </th>
+      <th>id</th>
+      <th>标题</th>
+      <th>内容</th>
+      <th>封面</th>
+      <th>类别</th>
+      <th>发布者</th>
+      <th>发布时间</th>
+      <th>修改时间</th>
+    </tr>
+    </thead>
+    <tbody id="tbodyId">
+		
+    </tbody>
+  </table>
+</div>
+<div class="mdui-fab-wrapper" id="post-fab">
+  <button class="mdui-fab mdui-ripple mdui-color-pink-accent">
+    <i class="mdui-icon material-icons">add</i>
+    <i class="mdui-icon mdui-fab-opened material-icons">mode_edit</i>
+  </button>
+  <div class="mdui-fab-dial">
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-pink"><i class="mdui-icon material-icons">backup</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-red"><i class="mdui-icon material-icons">bookmark</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-orange"><i class="mdui-icon material-icons">access_alarms</i>
+    </button>
+    <button class="mdui-fab mdui-fab-mini mdui-ripple mdui-color-blue"><i class="mdui-icon material-icons">touch_app</i>
+    </button>
+  </div>
+</div>
+<div class="mdui-container" id="pageId">
+	
+</div>
+<div class="mdui-dialog" id="delete-dialog">
+  <div class="mdui-dialog-title">确认删除？</div>
+  <div class="mdui-dialog-actions">
+    <button class="mdui-btn mdui-ripple" mdui-dialog-close>cancel</button>
+    <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>Yes</button>
+  </div>
+</div>
+<div class="mdui-dialog" id="choose-dialog">
+  <div class="mdui-dialog-title mdui-text-center">请先选中！</div>
+</div>
+<script>
+	var postFab = new mdui.Fab("#post-fab")
+	var delDialog = new mdui.Dialog('#delete-dialog')
+	var chDialog = new mdui.Dialog('#choose-dialog')
+	$(function(){
+		$("#pageId").load("common/page")
+		doGetObjects()
+		//工具按钮事件注册
+		$(".mdui-btn-group")
+		//.on("click",".btn-update",doQueryObjects)
+		//.on("click",".btn-add",doQueryObjects)
+		.on("click",".btn-delete",isDeleteObjects)
+		$("#search").on("click",doQueryObjects)
+		//全选按钮事件注册
+		$("#checkAll").change(doChangeTBodyCheckBoxState);
+		//基于tbody中checkbox状态,修改thead中checkbox状态
+		$("#tbodyId").on("change",".cBox",doChangeTHeadCheckBoxState)
+		
+		//对话框监听
+		$("#delete-dialog").on("confirm.mdui.dialog",doDeleteObjects)
+	})
+	function doQueryObjects(){
+		$("#pageId").data("pageCurrent", 1)
+		doGetObjects()
+	}
+	//异步(底层启动工作线程)加载服务端数据
+    function doGetObjects(){
+	  //$("#checkAll").prop("checked",false)
+	  //1.定义请求参数
+	  var pageCurrent=$("#pageId").data("pageCurrent")
+	  if(!pageCurrent){
+		  pageCurrent=1
+	  }
+	  var keyword = $("#keyword").val()
+	  if(!keyword){
+		  keyword = ""
+	  }
+	  var params = {
+			  "pageCurrent":pageCurrent,
+			  "keyword":keyword,
+			  }
+	  //2.定义请求的url
+	  var url="post/doFindPageObjects"
+	  //发起请求
+	  $.getJSON(url,params,function(result){//jsonResult
+		  console.log("result",result)
+		  //处理查询结果
+		  doHandleResponseResult(result)
+	  });
+   }
+   //处理查询结果
+   function doHandleResponseResult(result){
+	      if(result.state==1){
+	    	  //1.呈现日志记录
+	    	  console.log(result.data.records)
+	    	  doSetTableBodyRows(result.data.records)
+	    	  //2.呈现分页信息
+	    	  doSetPagination(result.data);//pageObject
+	      }else{
+	    	  alert(result.message)
+	      }
+   }
+   //追加列表到tbody中
+   function doSetTableBodyRows(records){
+	   var tBody=$("#tbodyId")
+	   tBody.empty();
+	   for(var i=0;i<records.length;i++){
+		  var tr=$("<tr></tr>")
+		  var tds=doCreateTds(records[i])
+		  tr.append(tds)
+		  tBody.append(tr)
+	   }
+	   $$(".mdui-table").mutation()
+   }
+   //创建节点
+   function doCreateTds(data){
+	    var tds="<td><label class='mdui-checkbox'>"+
+	    	"<input type='checkbox' class='cBox' value='"+data.id+"'/>"+
+	        "<i class='mdui-checkbox-icon'></i></label></td>"+
+	    "<td>"+data.id+"</td>"+
+	    "<td style='max-width: 150px;overflow: hidden; text-overflow:ellipsis;white-space: nowrap'>"+data.title+"</td>"+
+	    "<td style='max-width: 150px;overflow: hidden; text-overflow:ellipsis;white-space: nowrap'>"+data.content+"</td>"+
+	    "<td>"+data.cover+"</td>"+
+	    "<td>"+data.typeId+"</td>"+
+	    "<td>"+data.userId+"</td>"+
+	    "<td>"+data.createdTime+"</td>"+
+	    "<td>"+data.updatedTime+"</td>"
+        return tds;
+   }
+   //基于tbody中checkbox状态,修改thead中checkbox状态
+   function doChangeTHeadCheckBoxState(){
+	  //1.获取tbody中checbox对象状态相与的结果
+	  var flag=true;
+	  $("#tbodyId input[type='checkbox']")
+	  .each(function(){
+		  flag=flag&&$(this).prop("checked");
+	  });
+	  //2.修改thead中checkbox的值
+	  $("#checkAll").prop("checked",flag);
+   }
+   //点击thead中checkbox时,修改tbody中checkbox的状态
+   function doChangeTBodyCheckBoxState(){
+	   //1.获取点击对象的状态
+	   var flag=$(this).prop("checked");
+	   //2.修改tbody中checkbox的状态
+	   $("#tbodyId input[type='checkbox']")
+	   .each(function(){
+		   //prop方法中两个参数时表示为属性赋值
+		   $(this).prop("checked",flag);
+	   });
+   }
+   function doGetCheckedIds(){
+		 //1.定义数组
+		 var idArray=[];
+		 //2.迭代所有tbody中的checkbox,将选中的值存储到数组
+		 $("#tbodyId input[type='checkbox']")
+		 //each函数用于迭代元素,每发现一个就会执行function(){}
+		 .each(function(){
+			 //$(this)代表发现的checkbox对象
+			 //记住所有checkbox默认都有一个checked属性
+			 if($(this).prop("checked")){//选中状态
+				 idArray.push($(this).val());
+			 }
+		 })
+		 //3.返回存储了id的数组
+		 return idArray;
+	   }
+   function isDeleteObjects(){
+	   //1.获取选中记录对象的checkbox的值并进行判定
+	   var idArray=doGetCheckedIds();
+	   //console.log(idArray.toString());//37,38
+	   if(idArray.length==0){
+		   chDialog.open()
+		   return
+	   }
+	   delDialog.open()
+   }
+	   //点击删除按钮时执行删除操作
+	   function doDeleteObjects(){
+		   var idArray=doGetCheckedIds()
+		   
+		   //2.构建请求参数
+		   var params={"ids":idArray.toString()}
+		   //3.构建请求url
+		   var url="post/doDeleteObjects"
+		   //4.发送异步请求执行删除操作.
+		   $.post(url,params,function(result){
+			   if(result.state==1){
+				   alert(result.message);
+				   //查询刷新
+				   doSetPageCurrent();
+				   doGetObjects();
+			   }else{
+				   alert(result.message);
+			   }
+		   })
+	   }
+	   //删除以后刷新
+	   function doSetPageCurrent(){
+	  	 var pageCount=$("#pageId").data("pageCount");
+	  	 var pageCurrent=$("#pageId").data("pageCurrent");
+	  	 var checked=$("#checkAll").prop("checked");
+	  	 if(pageCurrent==pageCount&&checked&&pageCurrent>1){
+	  		 pageCurrent--;
+	  		 $("#pageId").data("pageCurrent",pageCurrent);
+	  	 }
+	  }
+</script>

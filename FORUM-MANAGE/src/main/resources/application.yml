@@ -10,7 +10,7 @@ spring:
   # 整合druid数据源  datasource:
     type: com.alibaba.druid.pool.DruidDataSource    url: jdbc:mysql:///forum?serverTimezone=GMT&characterEncoding=UTF-8
     username: root
-  # 配置springmvc
+  # 配置thymeleaf
   thymeleaf:
     prefix: classpath:/templates/pages/
     suffix: .html
@@ -22,7 +22,7 @@ spring:
 # 整合mybatis-plus
 mybatis-plus:
   # mapper文件
-  mapper-locations:  - classpath:/mapper/forum/*.xml
+  mapper-locations:  - classpath:/mybatis/mapper/*.xml
   # 配置驼峰命名机制
   configuration:    map-underscore-to-camel-case: true
   # 为实体类配置别名  type-aliases-package: com.ws.forum.pojo
@@ -35,6 +35,9 @@ spring:
     password: root
 server:
     port: 8080
+logging:
+  level:
+    com.ws: DEBUG
     
 ---
 spring:

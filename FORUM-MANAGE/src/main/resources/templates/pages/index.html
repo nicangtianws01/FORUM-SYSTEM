@@ -3,9 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link type="text/css" rel="stylesheet" href="/browser-components/mdui-v0.4.3/css/mdui.min.css"/>
+<style type="text/css">
+	table tr{
+		width: 150px;
+	}
+</style>
 </head>
-<body>
-	<h1>Index Page</h1>
-	<span th:text="${user.username}"></span>
+<body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-teal mdui-theme-accent-red mdui-loaded">
+<!-- 头部工具栏 -->
+<header class="mdui-appbar mdui-appbar-fixed mdui-appbar-scroll-hide">
+  <div class="mdui-toolbar mdui-color-theme">
+    <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target:'#main-drawer',swipe:true}"><i class="mdui-icon material-icons">menu</i></a>
+    <span class="mdui-typo-title">Title</span>
+    <div class="mdui-toolbar-spacer"></div>
+    <div class="mdui-col-md-4">
+	    <div class="mdui-textfield mdui-textfield-expandable mdui-float-right">
+		    <button class="mdui-textfield-icon mdui-btn mdui-btn-icon" id="search"><i class="mdui-icon material-icons">search</i></button>
+		    <input class="mdui-textfield-input" type="text" placeholder="Search" id="keyword"/>
+		    <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
+		</div>
+    </div>
+    
+    <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">refresh</i></a>
+    <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">more_vert</i></a>
+  </div>
+</header>
+<!-- 侧面折叠菜单 -->
+<div class="mdui-drawer mdui-drawer-close" id="main-drawer">
+  <div class="mdui-list mdui-collapse" mdui-collapse="{accordion: true}">
+  	<div class="mdui-collapse-item">
+  		<div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+	      <i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>
+	      <div class="mdui-list-item-content">Inbox</div>
+	      <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+	    </div>
+	    <div class="mdui-collapse-item-body mdui-list">
+	      <a class="mdui-list-item mdui-ripple"><i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>测试1</a>
+	    </div>
+  	</div>
+  </div>
+</div>
+<!-- 主要页面内容 -->
+<div class="mdui-container" id="main-content">
+</div>
+<script type="text/javascript" src="/browser-components/jquery-3.1.1/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="/browser-components/mdui-v0.4.3/js/mdui.min.js"></script>
+<script>
+	var $$ = mdui.JQ;
+	$(function(){
+		$("#main-content").load("post/post_list")
+	})
+</script>
 </body>
 </html>

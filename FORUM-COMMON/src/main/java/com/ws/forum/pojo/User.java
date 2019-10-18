@@ -21,8 +21,10 @@ public class User implements Serializable{
 	private String password;
 	private String salt;
 	private String email;
-	private String phone;
+	private String mobile;
 	private String avatar;
+	private Integer valid;
+	private Integer groupId;
 	private Date createdTime;
 	private Date updatedTime;
 }
