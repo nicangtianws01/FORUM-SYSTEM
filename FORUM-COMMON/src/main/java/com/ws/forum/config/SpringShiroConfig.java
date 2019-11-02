@@ -52,9 +52,17 @@ public class SpringShiroConfig {
 		//准备访问过滤器的map对象
 		LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		//静态资源允许匿名访问:"anon"
-		 map.put("/bower_components/**","anon");
+		 map.put("/browser-components/**","anon");
 		 //登录方法设置匿名访问
 		 map.put("/user/doLogin","anon");
+		 map.put("/common/page", "anon");
+//		 map.put("/index","anon");
+//		 map.put("/user/doFindPageObjects", "anon");
+//		 map.put("/user/doSaveUser", "anon");
+//		 map.put("/post/doFindPageObjects", "anon");
+//		 map.put("/post/post_list", "anon");
+//		 map.put("/user/user_list", "anon");
+//		 map.put("/user/user_edit", "anon");
 		 //配置退出登录
 		 map.put("/doLogout","logout");
 		 //除了匿名访问的资源,其它都要认证("authc")后访问

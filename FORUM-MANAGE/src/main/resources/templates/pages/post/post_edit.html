@@ -1,0 +1,158 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        	<i class="fa fa-arrow-left" onclick="doCancel();" style="font-size:20px;"></i>
+            <p class="panel-title text-center" style="font-size:24px;"></p>
+        </div>
+        <div class="panel-body">
+            <form>
+                <div class="form-group">
+                    <label for="titleId">标题</label>
+                    <input type="text" class="form-control" id="titleId" placeholder="标题">
+                </div>
+                <div class="form-group">
+                    <label for="contentId">内容</label>
+                    <textarea class="form-control" id="contentId" placeholder="内容" style="resize: none;height: 100px;"></textarea>
+                    <span><span id="textNum">0</span>/500</span>
+                </div>
+                <div class="form-group">
+                    <label for="coverId">添加封面</label>
+                    <input id="coverId" type="file" class="file">
+                    <div style="margin-top: 10px;">
+                        <a href="javascript:;" class="btn btn-default btn-upload">上传</a>
+                    </div>
+                    <div style="height: 100px;" id="coverImgId">
+
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="typeId">类别id</label>
+                    <select class="form-control" id="typeId">
+						
+					</select>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary btn-submit">添加</a><a class="btn btn-default pull-right btn-cancel">取消</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+    	doInitFormData();
+    	
+        $('#contentId').on("keyup", function() {
+            var content = $('#contentId').val();
+            $('#textNum').text(content.length); //这句是在键盘按下时，实时的显示字数
+            if (content.length > 500) {
+                $('#textNum').text(500); //长度大于100时0处显示的也只是100    
+                $('#contentId').val(content.substring(0, 500)); //长度大于100时截取钱100个字符
+            }
+        })
+        $('#textNum').text($('#contentId').val().length); //这句是在刷新的时候仍然显示字数
+        $('.btn-upload').click(doUploadImage);
+        $('.btn-submit').click(doSaveObject);
+        $('.btn-cancel').click(doCancel);
+    });
+
+    function doUploadImage() {
+    	var files = $('#coverId').get(0).files;
+    	if(!testMaxSize(files)){
+    		return;
+    	}
+        var formdata = new FormData();
+        formdata.append('uploadImage', files[0]);
+        $.ajax({
+            url: '/file/doUploadImage',
+            type: 'post',
+            contentType: false,
+            data: formdata,
+            processData: false,
+            success: function(result) {
+                if (result.state == 1) {
+                    alert(result.message);
+                    $('#coverImgId img').remove();
+                    $('#coverImgId').append('<img src="' + result.data.url + '" style="width: 200px;height: 100px;">');
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function() {
+                alert('上传失败');
+            }
+        });
+    }
+    function testMaxSize(files){
+    	var Max_Size = 1000;
+    	var isAllow = false;
+    	if(files && files[0]){
+            var fileData = files[0];
+            var size = fileData.size;   //注意，这里读到的是字节数
+            if(!size) {
+            	alert("图片数据获取失败！");
+            	return isAllow;
+			}
+            var maxSize = Max_Size;
+            maxSize = maxSize * 1024;   //转化为字节
+            if(size <= maxSize){
+        		isAllow = true;
+            }else{
+            	alert("图片最大允许1M！");
+            }
+    	}else{
+    		alert("请选择图片！");
+    	}
+    	return isAllow;
+    }
+    function doSaveObject(){
+    	var url = "/post/doSaveObject";
+    	var params = {
+    		title: $('#titleId').val(),
+    		content:$('#contentId').val(),
+    		cover: $('#coverImgId img').prop('src'),
+    	};
+    	$.post(url,params,function(result){
+    		if(result.state == 1){
+    			alert(result.message);
+    			doCancel();
+    		}else{
+    			alert(result.message);
+    		}
+    	});
+    }
+	function doCancel() {
+	    $("#mainContentId").removeData("rowData");
+	    $("#mainContentId").load("/post/post_list");
+	}
+	 function doInitFormData(){
+		 doGetPostTypes();
+	     var data=$("#mainContentId").data("rowData");
+	     if(!data)return;
+		 //初始化贴子信息 
+		 $("#titleId").val(data.title);
+		 $("#contentId").val(data.content);
+		 $('#coverImgId').append('<img src="' + data.cover + '" style="width: 200px;height: 100px;">');
+	 }
+	 function doGetPostTypes(){
+		 var url = "/post_type/doGetObjects";
+		 $.getJSON(url,function(result){
+			 
+			 if(result.state == 1){
+		     	doInsertPostType(result.data);
+		     }else{
+		     	alert(result.message);
+		     }
+		 });
+	 }
+	 function doInsertPostType(records){
+		 
+		 var targetDiv = $("#typeId");
+		 targetDiv.empty();
+		 for(var i = 0;i < records.length;i++){
+			 var option = '<option value="'+records[i].id+'">'+records[i].name+'</option>';
+			 targetDiv.append(option);
+		 }
+	 }
+</script>

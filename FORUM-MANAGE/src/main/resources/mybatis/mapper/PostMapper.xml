@@ -5,9 +5,9 @@
 <mapper namespace="com.ws.forum.dao.PostDao">
    <select id="findPageObjects" resultType="Post">
          select *
-         from post
+         from tb_post
          where title like concat("%",concat(#{keyword},"%"))
-         order by createdTime desc
+         order by created_time desc
          limit #{startIndex},#{pageSize}
    </select>
 </mapper>

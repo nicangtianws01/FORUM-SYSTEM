@@ -6,22 +6,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ws.forum.pojo.Post;
 import com.ws.forum.service.PostService;
 import com.ws.forum.vo.JsonResult;
 
-@RequestMapping("/post/")
+@RequestMapping("/post")
 @RestController
 public class PostController {
 	@Autowired
 	private PostService postService;
 	
-	@GetMapping("doFindPageObjects")
+	@GetMapping("/doFindPageObjects")
 	public JsonResult doFindPageObjects(String keyword,Integer pageCurrent) {
-		return new JsonResult(postService.findPageObjects(keyword,pageCurrent));
+		return JsonResult.successData(postService.findPageObjects(keyword, pageCurrent));
 	}
-	@PostMapping("doDeleteObjects")
+	
+	@PostMapping("/doSaveObject")
+	public JsonResult doSaveObject(Post entity) {
+		postService.saveObject(entity);
+		return JsonResult.successMsg("添加成功！");
+	}
+	
+	@PostMapping("/doDeleteObjects")
 	public JsonResult doDeleteObjects(Integer... ids) {
 		postService.deleteObjects(ids);
-		return new JsonResult("删除成功！");
+		return JsonResult.successMsg("删除成功！");
+	}
+	@GetMapping("/doGetObjectById")
+	public JsonResult doGetObjectById(Integer id) {
+		return JsonResult.successData(postService.getObjectById(id));
 	}
 }

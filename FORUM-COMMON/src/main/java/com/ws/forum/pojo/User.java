@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-@TableName("user")
+@TableName("tb_user")
 @Accessors(chain = true)
 @Data
 public class User implements Serializable{
@@ -20,6 +20,7 @@ public class User implements Serializable{
 	private String username;
 	private String password;
 	private String salt;
+	private String introduce;
 	private String email;
 	private String mobile;
 	private String avatar;

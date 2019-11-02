@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
-@TableName("log")
+@TableName("tb_log")
 @Accessors(chain = true)
 public class Log implements Serializable{
 	private static final long serialVersionUID = -6357849870406772788L;

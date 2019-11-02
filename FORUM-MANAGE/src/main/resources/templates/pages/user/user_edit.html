@@ -1,0 +1,147 @@
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+        	<i class="fa fa-arrow-left" onclick="doCancel();" style="font-size:20px;"></i>
+            <p class="panel-title text-center" style="font-size:24px;"></p>
+        </div>
+        <div class="panel-body">
+            <form>
+                <div class="form-group">
+                    <label for="usernameId">用户名</label>
+                    <input type="text" class="form-control" id="usernameId" placeholder="用户名">
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <label for="passwordId">密码</label>
+                    <input type="password" class="form-control" id="passwordId" placeholder="密码">
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <label for="rePasswordId">重复密码</label>
+                    <input type="password" class="form-control" id="rePasswordId" placeholder="重复密码">
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <label for="mobileId">电话</label>
+                    <input type="text" class="form-control" id="mobileId" placeholder="电话">
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <label for="emailId">邮箱</label>
+                    <input type="text" class="form-control" id="emailId" placeholder="邮箱">
+                    <span class="help-block"></span>
+                </div>
+                <div class="form-group">
+                    <label for="introduceId">简介</label>
+                    <textarea class="form-control" id="introduceId" placeholder="简介" style="resize: none;"></textarea>
+                    <span><span id="textNum">0</span>/100</span>
+                </div>
+                <div class="form-group">
+                    <label for="ckGroupId">用户组</label>
+                    <div id="ckGroupId" style="margin-top:10px;">
+						
+                	</div>
+                	<span class="help-block"></span>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary btn-submit">添加</a><a class="btn btn-default pull-right btn-cancel">取消</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+	$(function() {
+		doGetGroupItems();
+	     $('#introduceId').on("keyup", function() {
+	    	 var intro = $('#introduceId').val();
+	         $('#textNum').text(intro.length); //这句是在键盘按下时，实时的显示字数
+	         if (intro.length > 100) {
+	             $('#textNum').text(100); //长度大于100时0处显示的也只是100    
+	             $('#introduceId').val(intro.substring(0, 100)); //长度大于100时截取钱100个字符
+	         }
+	     });
+	     $('#textNum').text($('#introduceId').val().length); //这句是在刷新的时候仍然显示字数
+	     
+	     $('.btn-submit').on('click', doSaveOrUpdate);
+	     $('.btn-cancel').on('click', doCancel);
+	 });
+	
+	function doGetGroupItems(){
+		var url = "/user/doGetGroupItems";
+		$.getJSON(url,function(result){
+			console.log(result);
+			if(result.state == 1){
+				doInsertGroupItems(result.data);
+			}
+		});
+	}
+	function doInsertGroupItems(records){
+		var ckDiv = $('#ckGroupId');
+		ckDiv.empty();
+		for(var i = 0;i < records.length;i++){
+			console.log(records[i].id);
+			var item = '<span style="margin-right:10px;"><input type="radio" name="groupRadio" value="' + records[i].id + '">' + records[i].name +'</span>';
+			ckDiv.append(item);
+		}
+	}
+	 function doSaveOrUpdate() {
+	     if (!doCheckPassword()) {
+	         return;
+	     }
+	     var rowData = $("#mainContentId").data("rowData");
+	     //1.获取表单数据
+	     var params = doGetEditFormData();
+	     if (rowData) {
+	         params.id = rowData.user.id
+	     };
+	     //2.发起异步请求
+	     var insertUrl = "/user/doSaveUser";
+	     var updateUrl = "/user/doUpdateUser";
+	     var url = rowData ? updateUrl : insertUrl;
+	     $.post(url, params, function(result) {
+	         if (result.state == 1) {
+	             alert(result.message);
+	             doCancel();
+	         } else {
+	             alert(result.message);
+	         }
+	     })
+	 }
+	
+	 function doCancel() {
+	     $("#mainContentId").removeData("rowData");
+	     $("#mainContentId").load("/user/user_list");
+	 }
+	
+	 function doCheckPassword() {
+	     if ($("#usernameId").val() == "") {
+	    	 $('#usernameId').siblings('.help-block').html("用户名不能为空");
+	         return false;
+	     }
+	     if ($("#passwordId").val() == "") {
+	         alert("密码不能为空");
+	         return false;
+	     }
+	     if ($("#passwordId").val() != $("#rePasswordId").val()) {
+	         alert("重复密码与密码必须相同");
+	         return false;
+	     }
+	     return true;
+	 }
+	
+	 function doGetEditFormData() {
+	     //获取用户输入的数据
+	     var params = {
+	         username: $("#usernameId").val(),
+	         password: $("#passwordId").val(),
+	         groupId: getGroupId(),
+	         itroduce: $('#introduceId').val(),
+	     };
+	     return params;
+	 }
+	 function getGroupId(){
+		 return $('#ckGroupId input[type=checkbox]:checked').val();
+	 }
+</script>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="../browser-components/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+	<form>
+		<div class="form-group">
+            <label for="coverId">添加封面</label>
+            <input id="coverId" type="file" class="file">
+        </div>
+        <div class="btn-group">
+            <a class="btn btn-primary btn-submit">添加</a><a class="btn btn-default pull-right btn-cancel">取消</a>
+        </div>
+	</form>
+    <!-- jQuery -->
+    <script src="../browser-components/jquery-3.1.1/jquery-3.1.1.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="../browser-components/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        $(function() {
+            $('.btn-submit').click(doSaveObject);
+            $('.btn-cancel').on('click', doCancel);
+        });
+
+        function doSaveObject() {
+            var url = '/file/fileUpload';
+            var params = {
+                coverImg: $('#coverId').serialize(),
+            };
+            $.post(url, params, function(result) {
+                if (result.state == 1) {
+                    alert(result.message);
+                    doCancel();
+                } else {
+                    alert(result.message);
+                }
+            });
+        }
+
+        function doCancel() {
+            $("#main-content").removeData("rowData");
+            $("#main-content").load("/post/post_list");
+        }
+    </script>
+</body>
+
+</html>

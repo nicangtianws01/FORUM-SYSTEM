@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * VO:
@@ -19,6 +20,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 public class JsonResult implements Serializable{
 	private static final long serialVersionUID = 5415540679197546732L;
 	/**状态码*/
@@ -27,16 +29,28 @@ public class JsonResult implements Serializable{
     private String message="ok";
     /**正常数据*/
     private Object data;
-    public JsonResult(String message) {
-    	this.message=message;
-    }
-    public JsonResult(Object data) {
-    	this.data=data;
-    }
     /**封装异常数据*/
     public JsonResult(Throwable e) {
     	this.state=0;
     	this.message=e.getMessage();
+    }
+    public static JsonResult successData(Object data) {
+    	JsonResult result = new JsonResult();
+    	result.setData(data);
+    	return result;
+    }
+    public static JsonResult successMsg(String msg) {
+    	JsonResult result = new JsonResult();
+    	result.setMessage(msg);
+    	return result;
+    }
+    public static JsonResult success() {
+    	return new JsonResult();
+    }
+    public static JsonResult failed(String msg) {
+    	JsonResult result = new JsonResult();
+    	result.setMessage(msg);
+    	return result;
     }
 }
 

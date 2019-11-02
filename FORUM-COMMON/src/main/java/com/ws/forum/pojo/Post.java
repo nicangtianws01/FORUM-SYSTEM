@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-@TableName("post")
+@TableName("tb_post")
 @Accessors(chain = true)
 @Data
 public class Post implements Serializable{
@@ -22,6 +22,7 @@ public class Post implements Serializable{
 	private String cover;
 	private Integer typeId;
 	private Integer userId;
+	private Integer modifyId;
 	private Date createdTime;
 	private Date updatedTime;
 	

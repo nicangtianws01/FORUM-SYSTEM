@@ -1,59 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link type="text/css" rel="stylesheet" href="/browser-components/mdui-v0.4.3/css/mdui.min.css"/>
-<style type="text/css">
-	table tr{
-		width: 150px;
-	}
-</style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title Page</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="/browser-components/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../browser-components/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
 </head>
-<body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-teal mdui-theme-accent-red mdui-loaded">
-<!-- 头部工具栏 -->
-<header class="mdui-appbar mdui-appbar-fixed mdui-appbar-scroll-hide">
-  <div class="mdui-toolbar mdui-color-theme">
-    <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target:'#main-drawer',swipe:true}"><i class="mdui-icon material-icons">menu</i></a>
-    <span class="mdui-typo-title">Title</span>
-    <div class="mdui-toolbar-spacer"></div>
-    <div class="mdui-col-md-4">
-	    <div class="mdui-textfield mdui-textfield-expandable mdui-float-right">
-		    <button class="mdui-textfield-icon mdui-btn mdui-btn-icon" id="search"><i class="mdui-icon material-icons">search</i></button>
-		    <input class="mdui-textfield-input" type="text" placeholder="Search" id="keyword"/>
-		    <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
-		</div>
+
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">FORUM</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">后台管理 <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">进入前台</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">系统管理 <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li id="post-page"><a href="#">贴子管理</a></li>
+                            <li id="comment-page"><a href="#">回复管理</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li id="user-page"><a href="#">用户管理</a></li>
+                            <li id="group-page"><a href="#">用户组管理</a></li>
+                            <li id="permission-page"><a href="#">权限管理</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Input Keyword" id="keyword">
+                    </div>
+                    <a class="btn btn-default" id="search">Search</a>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        	<span class="avatar"></span>
+                        	<span class="username"></span>
+                        	<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">修改密码</a></li>
+                            <li><a href="/doLogout">退出登录</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+    <div id="mainContentId">
+
     </div>
-    
-    <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">refresh</i></a>
-    <a href="javascript:;" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">more_vert</i></a>
-  </div>
-</header>
-<!-- 侧面折叠菜单 -->
-<div class="mdui-drawer mdui-drawer-close" id="main-drawer">
-  <div class="mdui-list mdui-collapse" mdui-collapse="{accordion: true}">
-  	<div class="mdui-collapse-item">
-  		<div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
-	      <i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>
-	      <div class="mdui-list-item-content">Inbox</div>
-	      <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
-	    </div>
-	    <div class="mdui-collapse-item-body mdui-list">
-	      <a class="mdui-list-item mdui-ripple"><i class="mdui-list-item-icon mdui-icon material-icons">move_to_inbox</i>测试1</a>
-	    </div>
-  	</div>
-  </div>
-</div>
-<!-- 主要页面内容 -->
-<div class="mdui-container" id="main-content">
-</div>
-<script type="text/javascript" src="/browser-components/jquery-3.1.1/jquery-3.1.1.min.js"></script>
-<script type="text/javascript" src="/browser-components/mdui-v0.4.3/js/mdui.min.js"></script>
-<script>
-	var $$ = mdui.JQ;
-	$(function(){
-		$("#main-content").load("post/post_list")
-	})
-</script>
+    <!-- jQuery -->
+    <script src="/browser-components/jquery-3.1.1/jquery-3.1.1.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="/browser-components/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <script>
+        $(function() {
+        	doGetLoginUser();
+            $("#mainContentId").load("/post/post_list");
+            loadPage('user-page','/user/user_list');
+            loadPage('post-page','/post/post_list');
+        });
+        function loadPage(id,url){
+        	$('#'+id).on('click',function(){
+        		$('#mainContentId').load(url);
+        	});
+        }
+        function doGetLoginUser(){
+        	var url = "/user/doGetLoginUser";
+			$.get(url,function(result){
+				if(result.state == 1){
+					doHandleResult(result.data);
+				}else{
+					alert(result.message);
+				}
+			})
+        }
+        function doHandleResult(user){
+        	if(user && user.username){
+            	$('.username').html(user.username);
+            	$('.avatar').html('<img src="' + user.avatar + '" class="img-circle" style="width:50px;height:50px;">');
+        	}
+        }
+    </script>
 </body>
+
 </html>

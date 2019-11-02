@@ -8,5 +8,9 @@ public interface PostService {
 	PageObject<Post> findPageObjects(String keyword, Integer pageCurrent);
 
 	int deleteObjects(Integer[] ids);
+
+	int saveObject(Post entity);
+
+	Post getObjectById(Integer id);
 	
 }

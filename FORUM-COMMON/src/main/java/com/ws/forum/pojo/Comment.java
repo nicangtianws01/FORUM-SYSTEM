@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-@TableName("comment")
+@TableName("tb_comment")
 @Accessors(chain = true)
 @Data
 public class Comment implements Serializable{
