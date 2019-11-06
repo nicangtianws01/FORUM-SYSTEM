@@ -1,2 +1,2 @@
 # FORUM-SYSTEM
-主要使用springboot框架与bootstrap框架实现的分布式架构的论坛系统前后端集成项目，包括管理系统和前台浏览系统。
+主要使用springboot框架与vue+bootstrap框架实现的分布式架构的论坛系统前后端集成项目，包括管理系统和前台浏览系统。
