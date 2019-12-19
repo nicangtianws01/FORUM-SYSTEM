@@ -63,7 +63,7 @@ public class PostServiceImpl implements PostService{
 			throw new IllegalArgumentException("内容不能为空");
 		}
 		if(StringUtils.isEmpty(entity.getCover())) {
-			entity.setCover("http://image.nicangtianws.com/post/default.jpg");
+			entity.setCover("http://image.nicangtianws.com/forum/cover/default.jpg");
 		}
 		entity.setUserId(ShiroUtils.getLoginUser().getId())
 			.setTypeId(1).setModifyId(ShiroUtils.getLoginUser().getId())

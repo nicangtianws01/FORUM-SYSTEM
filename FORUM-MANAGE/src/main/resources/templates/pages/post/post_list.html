@@ -1,250 +1,223 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h2>
-                <span>帖子列表</span>
-                <div class="btn-group" role="group" aria-label="...">
-                    <button type="button" class="btn btn-primary btn-add">添加</button>
-                    <button type="button" class="btn btn-default btn-update">更新</button>
-                    <button type="button" class="btn btn-danger btn-delete">删除</button>
-                </div>
-            </h2>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            <input type="checkbox" id="checkAll" />
-                        </th>
-                        <th>id</th>
-                        <th>标题</th>
-                        <th>内容</th>
-                        <th>封面</th>
-                        <th>类别</th>
-                        <th>发布者</th>
-                        <th>发布时间</th>
-                        <th>修改时间</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyId">
-
-                </tbody>
-            </table>
-        </div>
-    </div>
-	<div class="row">
-		<div id="pageId">
-		
+<div id="post-list-app">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>
+					<div class="col-md-4">
+						<span>帖子列表</span>
+					</div>
+					<div class="col-md-4">
+						<form class="form-inline">
+							<div class="form-group">
+								<input type="text" class="form-control" v-model="keyword">
+							</div>
+							<a class="btn btn-default" @click="doSearch">Search</a>
+						</form>
+					</div>
+					<div class="btn-group col-md-4" role="group" aria-label="...">
+						<button type="button" class="btn btn-primary btn-add" @click="doEdited">添加</button>
+						<button type="button" class="btn btn-default btn-update">更新</button>
+						<button type="button" class="btn btn-danger btn-delete"
+							@click="doDeleteObject">删除</button>
+					</div>
+				</h2>
+			</div>
 		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>
+								<!--全选按钮--> <input type="checkbox" id="checkAll"
+								v-model="checked" @click="checkedAll" />
+							</th>
+							<th>id</th>
+							<th>标题</th>
+							<th>内容</th>
+							<th>封面</th>
+							<th>类别</th>
+							<th>发布者</th>
+							<th>发布时间</th>
+							<th>修改时间</th>
+						</tr>
+					</thead>
+					<tbody id="tbodyId" v-for="row in rows">
+						<tr>
+							<td><input type="checkbox" v-model="checkboxList"
+								:value="row.id"></td>
+							<td>{{ row.id }}</td>
+							<td class="my-td">{{ row.title }}</td>
+							<td class="my-td">{{ row.content }}</td>
+							<td class="my-td">{{ row.cover }}</td>
+							<td>{{ row.typeId }}</td>
+							<td>{{ row.userId }}</td>
+							<td>{{ row.createdTime }}</td>
+							<td>{{ row.updatedTime }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<page-component :page-info="pageInfo"></page-component>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<modal-dialog :show.sync="show" :class="dialogClass">
+			<header class="my-dialog-header" slot="header">
+				<h1 class="my-dialog-title">提示信息</h1>
+			</header>
+	
+			<div class="my-dialog-body" slot="body">
+				<p>{{ message }}</p>
+			</div>
+	
+			<footer class="my-dialog-footer" slot="footer">
+				<button @click="closeDialog" class="my-button">关闭</button>
+			</footer> 
+		</modal-dialog>
 	</div>
 </div>
 <script>
-    $(function() {
-    	$("#pageId").load("/common/page");
-        //初始化数据
-        doGetObjects();
-        //工具按钮事件注册
-        $('.btn-group')
-        	.on('click','.btn-add,.btn-update',doLoadEditUI)
-        	.on('click','.btn-delete',doDeleteObjects);
-        //搜索按钮事件注册
-        $("#search").on("click", doQueryObjects);
-        //全选按钮事件注册
-        $("#checkAll").change(doChangeTBodyCheckBoxState);
-        //基于tbody中checkbox状态,修改thead中checkbox状态
-        $("#tbodyId").on("change", ".cBox", doChangeTHeadCheckBoxState);
+    var postApp = new Vue({
+        el: "#post-list-app",
+        data: function() {
+            return {
+                rows: [],
+                pageInfo: {},
+                checkboxList: [],
+                checked: false,
+                keyword: "",
+                message: "",
+                show: false,
+                dialogClass: 'my-dialog-info',
+                title: "添加帖子",
+            }
+        },
+        mounted: function() {
+            Vue.set(this.pageInfo, "pageCurrent", 1);
+            this.doGetObject();
+        },
+        methods: {
+            openDialog: function(dialogClass) {
+                this.show = true;
+                this.dialogClass = dialogClass;
+            },
+            closeDialog: function() {
+                this.show = false;
+            },
+            doEdited: function(dialogClass) {
+            	$('#mainContentId').load('/post/post_edit');
+            },
+            doDeleteObject: function() {
+                if (this.checkboxList.length == 0) {
+                    this.message = "请先选中！";
+                    this.openDialog("my-dialog-info");
+                    return;
+                }
+                if (!confirm("是否确认删除？")) {
+                    return;
+                }
+                var url = "/post/doDeleteObjects";
+                var params = {
+                    ids: this.checkboxList,
+                };
+                //console.log(params);
+                axios.post(url, Qs.stringify(params, {
+                        indices: false
+                    }))
+                    .then((response) => {
+                        //console.log(response);
+                        this.message = response.data.message;
+                        if (response.data.state == 0) {
+                            this.openDialog("my-dialog-error");
+                            return;
+                        }
+                        this.openDialog("my-dialog-info");
+                        var pageCurrent = this.pageInfo.pageCurrent;
+                        if (this.checked && pageCurrent <= 1) {
+                            this.message = "没有数据";
+                            this.openDialog("my-dialog-error");
+                            this.rows = [];
+                            Vue.set(this.pageInfo, "pageCurrent", 1);
+                            Vue.set(this.pageInfo, "pageCount", 0);
+                            Vue.set(this.pageInfo, "rowCount", 0);
+                        }
+                        this.pageInfo.pageCurrent -= 1;
+                        this.doGetObject();
+                        Vue.set(this, "checked", false);
+                    })
+                    .catch((error) => {
+                        this.message = error;
+                        this.openDialog("my-dialog-error");
+                    });
+            },
+            checkedAll: function() {
+                if (this.checked) { //实现反选
+                    this.checkboxList = [];
+                } else { //实现全选
+                    this.checkboxList = [];
+                    this.rows.forEach((row) => {
+                        this.checkboxList.push(row.id);
+                    });
+                }
+            },
+            doSearch: function() {
+                //console.log(this.keyword);
+                Vue.set(this.pageInfo, "pageCurrent", 1);
+                this.doGetObject();
+            },
+            doGetObject: function() {
+                var url = "/post/doGetPageObject/" + this.pageInfo.pageCurrent + "?keyword=" + this.keyword;
+                axios.get(url)
+                    .then((response) => {
+                        //console.log(response);
+                        var result = response.data;
+                        //console.log(response.data);
+                        if (result.state == 0) {
+                            this.message = result.message;
+                            this.openDialog("my-dialog-error");
+                            return;
+                        }
+                        var data = result.data;
+                        Vue.set(this.pageInfo, "pageCurrent", data.pageCurrent);
+                        Vue.set(this.pageInfo, "pageCount", data.pageCount);
+                        Vue.set(this.pageInfo, "rowCount", data.rowCount);
+                        this.rows = [];
+                        data.records.forEach((row) => {
+                            this.rows.push(row);
+                        });
+                    })
+                    .catch((error) => {
+                        this.message = error;
+                        this.openDialog("my-dialog-error");
+                        Vue.set(this.pageInfo, "pageCurrent", 1);
+                        Vue.set(this.pageInfo, "pageCount", 0);
+                        Vue.set(this.pageInfo, "rowCount", 0);
+                    });
+            },
+           submit:function(){
+        	   this.edited = false;
+           }
+        },
+        watch: { //深度 watcher
+            checkboxList: {
+                handler: function(val, oldVal) {
+                    if (this.checkboxList.length === this.rows.length) {
+                        this.checked = true;
+                    } else {
+                        this.checked = false;
+                    }
+                },
+                deep: true
+            }
+        },
+        computed: {},
+        components: {
+        	
+        },
     });
-	//搜索功能
-    function doQueryObjects() {
-        $("#pageId").data("pageCurrent", 1);
-        doGetObjects();
-    }
-    //异步加载服务端数据
-    function doGetObjects() {
-        //$("#checkAll").prop("checked",false);
-        //1.定义请求参数
-        var pageCurrent = $("#pageId").data("pageCurrent");
-        if (!pageCurrent) {
-            pageCurrent = 1;
-        };
-        var keyword = $("#keyword").val();
-        if (!keyword) {
-            keyword = "";
-        };
-        var params = {
-            "pageCurrent": pageCurrent,
-            "keyword": keyword,
-        };
-        //2.定义请求的url
-        var url = "/post/doFindPageObjects";
-        //3.发起请求
-        $.getJSON(url, params, function(result) { //JsonResult
-            //console.log("result", result);
-            //4.处理查询结果
-            doHandleResponseResult(result);
-        });
-    }
-    //处理查询结果
-    function doHandleResponseResult(result) {
-        if (result.state == 1) {
-            //1.呈现日志记录
-            doSetTableBodyRows(result.data.records);
-            //2.呈现分页信息
-            doSetPagination(result.data); //PageObject
-        } else {
-            alert(result.message);
-        }
-    }
-    //追加列表到tbody中
-    function doSetTableBodyRows(records) {
-        var tBody = $("#tbodyId");
-        tBody.empty();
-        for (var i = 0; i < records.length; i++) {
-            var tr = $("<tr></tr>");
-            var tds = doCreateTds(records[i]);
-            tr.append(tds);
-            tBody.append(tr);
-        }
-    }
-    //创建数据行
-    function doCreateTds(row) {
-        var tds = "<td><input type='checkbox' class='cBox' value='" + row.id + "'/></td>" +
-            "<td>" + row.id + "</td>" +
-            "<td style='max-width: 150px;overflow: hidden; text-overflow:ellipsis;white-space: nowrap'>" + row.title + "</td>" +
-            "<td style='max-width: 150px;overflow: hidden; text-overflow:ellipsis;white-space: nowrap'>" + row.content + "</td>" +
-            "<td style='max-width: 150px;overflow: hidden; text-overflow:ellipsis;white-space: nowrap'>" + row.cover + "</td>" +
-            "<td>" + row.typeId + "</td>" +
-            "<td>" + row.userId + "</td>" +
-            "<td>" + row.createdTime + "</td>" +
-            "<td>" + row.updatedTime + "</td>";
-        return tds;
-    }
-    //基于tbody中checkbox状态,修改thead中checkbox状态
-    function doChangeTHeadCheckBoxState() {
-        //1.获取tbody中checbox对象状态相与的结果
-        var flag = true;
-        $("#tbodyId input[type='checkbox']").each(function() {
-                flag = flag && $(this).prop("checked");
-            })
-            //2.修改thead中checkbox的值
-        $("#checkAll").prop("checked", flag);
-    }
-    //点击thead中checkbox时,修改tbody中checkbox的状态
-    function doChangeTBodyCheckBoxState() {
-        //1.获取点击对象的状态
-        var flag = $(this).prop("checked");
-        //2.修改tbody中checkbox的状态
-        $("#tbodyId input[type='checkbox']").each(function() {
-            //prop方法中两个参数时表示为属性赋值
-            $(this).prop("checked", flag);
-        })
-    }
-
-    function doGetCheckedIds() {
-        //1.定义数组
-        var idArray = [];
-        //2.迭代所有tbody中的checkbox,将选中的值存储到数组
-        $("#tbodyId input[type='checkbox']").each(function() {
-            //记住所有checkbox默认都有一个checked属性
-            if ($(this).prop("checked")) { //选中状态
-                idArray.push($(this).val());
-            }
-        });
-        //3.返回存储了id的数组
-        return idArray;
-    }
-
-    //点击删除按钮时执行删除操作
-    function doDeleteObjects() {
-        var idArray = doGetCheckedIds();
-        if(idArray.length == 0){
-        	alert("请先选中");
-        	return;
-        }
-        if (!confirm("是否确认删除？")) {
-            return;
-        }
-        //2.构建请求参数
-        var params = {
-            "ids": idArray.toString(),
-        };
-        //3.构建请求url
-        var url = "/post/doDeleteObjects";
-        //4.发送异步请求执行删除操作.
-        $.post(url, params, function(result) {
-            if (result.state == 1) {
-                alert(result.message);
-                //查询刷新
-                doSetPageCurrent();
-                doGetObjects();
-            } else {
-                alert(result.message);
-            }
-        })
-    }
-    //删除以后刷新
-    function doSetPageCurrent() {
-        var pageCount = $("#pageId").data("pageCount");
-        var pageCurrent = $("#pageId").data("pageCurrent");
-        var checked = $("#checkAll").prop("checked");
-        if (pageCurrent == pageCount && checked && pageCurrent > 1) {
-            pageCurrent--;
-            $("#pageId").data("pageCurrent", pageCurrent);
-        }
-    }
-    //判断加载添加/更新数据页面
-    function doLoadEditUI() {
-        //1.判定点击的对象
-        var title;
-        if ($(this).hasClass("btn-add")) {
-            title = "添加贴子";
-            doLoadPage(title);
-        } else if ($(this).hasClass("btn-update")) {
-            title = "修改贴子";
-            var id = doGetFirstCheckedId();
-            console.log(id);
-            if (!id) {
-                alert("请先选择");
-                return;
-            }
-            //基于id进行查询并加载编辑页面
-            doGetObjectById(id, title);
-        }
-    }
-    function doGetObjectById(id,title){
-    	var url = "/post/doGetObjectById";
-    	var params = {
-    		id:id,
-    	};
-    	$.getJSON(url,params,function(result){
-    		if(result.state == 1){
-    			$("#mainContentId").data("rowData",result.data);
-    			doLoadPage(title);
-    		}else{
-    			alert(result.message);
-    		}
-    	});
-    }
-	//加载编辑页面
-    function doLoadPage(title) {
-        var url = "/post/post_edit";
-        $("#mainContentId").load(url, function() {
-            $(".panel-title").html(title);
-        })
-    }
-    //迭代所有tbody中的checkbox，将第一个选中的值返回
-    function doGetFirstCheckedId() {
-    	var id;
-        $("#tbodyId input[type='checkbox']").each(function() {
-            if ($(this).prop("checked")) { //选中状态
-            	id = $(this).val();
-                return;
-            }
-        });
-        return id;
-    }
 </script>

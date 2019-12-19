@@ -56,13 +56,17 @@ public class SpringShiroConfig {
 		 //登录方法设置匿名访问
 		 map.put("/user/doLogin","anon");
 		 map.put("/common/page", "anon");
-//		 map.put("/index","anon");
-//		 map.put("/user/doFindPageObjects", "anon");
-//		 map.put("/user/doSaveUser", "anon");
-//		 map.put("/post/doFindPageObjects", "anon");
-//		 map.put("/post/post_list", "anon");
-//		 map.put("/user/user_list", "anon");
-//		 map.put("/user/user_edit", "anon");
+		 map.put("/index","anon");
+		 map.put("/user/doGetPageObject", "anon");
+		 map.put("/user/doSaveUser", "anon");
+		 map.put("/post/doGetPageObject/*", "anon");
+		 map.put("/post/doDeleteObjects", "anon");
+		 map.put("/post/doSaveObject", "anon");
+		 map.put("/post/post_list", "anon");
+		 map.put("/post/post_edit", "anon");
+		 map.put("/user/user_list", "anon");
+		 map.put("/user/user_edit", "anon");
+		 map.put("/post_type/doGetObjects", "anon");
 		 //配置退出登录
 		 map.put("/doLogout","logout");
 		 //除了匿名访问的资源,其它都要认证("authc")后访问

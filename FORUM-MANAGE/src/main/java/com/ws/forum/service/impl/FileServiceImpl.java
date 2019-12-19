@@ -23,7 +23,7 @@ public class FileServiceImpl implements FileService {
 
 	@Value("${image.localDirPath}")
 	private String localDirPath;
-	@Value("${image.postUrlDirPath}")
+	@Value("${image.coverUrlDirPath}")
 	private String urlDirPath;
 	
 	@Override

@@ -9,7 +9,7 @@ spring:
     - dev
   # 整合druid数据源  datasource:
     type: com.alibaba.druid.pool.DruidDataSource    url: jdbc:mysql:///forum?serverTimezone=GMT&characterEncoding=UTF-8
-    username: root
+    username: forumuser
   # 配置thymeleaf
   thymeleaf:
     prefix: classpath:/templates/pages/
@@ -32,7 +32,7 @@ spring:
   thymeleaf:    cache: false
   profiles: dev
   datasource:
-    password: root
+    password: 123456
 server:
     port: 8080
 logging:
